@@ -17,7 +17,7 @@ class SocketHelper:public QObject
     Q_OBJECT
 public:
     explicit SocketHelper(QObject *parent = nullptr);
-    MServer* myserver;
+    MServer* m_server;
 public slots:
     // 创建socket
     void CreateSocket(qintptr socketDescriptor,int index);

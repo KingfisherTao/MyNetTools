@@ -5,7 +5,7 @@
 
 MSocket::MSocket(QObject *parent)
 {
-    this->m_tcpServer=static_cast<MServer*>(parent);
+    m_tcpServer=static_cast<MServer*>(parent);
 }
 
 MSocket::~MSocket()
@@ -23,9 +23,9 @@ void MSocket::deal_readyRead()
     QByteArray ba = tcpsocket->readAll();
     QString data;
     // hex接收
-    if(this->m_tcpServer->mainwindow->m_serverHexSend)
+    if(m_tcpServer->mainwindow->m_serverHexSend)
     {
-        this->m_tcpServer->mainwindow->ByteToHexString(data,ba);
+        m_tcpServer->mainwindow->ByteToHexString(data,ba);
     }
     // 普通字符串接收
     else
@@ -41,7 +41,7 @@ void MSocket::deal_readyRead()
 
 void MSocket::deal_write(QByteArray ba)
 {
-    this->write(ba);
+    write(ba);
 }
 void MSocket::deal_disconnect()
 {
@@ -57,7 +57,7 @@ void MSocket::deal_disconnect()
     // 断开所有信号连接
     tcpsocket->disconnect();
     // 发送到UI线程移除信息
-    emit this->sockethelper->RemoveList(tcpsocket);
+    emit sockethelper->RemoveList(tcpsocket);
     // 释放
     tcpsocket->deleteLater();
 }

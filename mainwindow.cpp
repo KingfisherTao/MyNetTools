@@ -125,7 +125,7 @@ void MainWindow::UdpReadData()
     // hex
     if(ui->chk_udpRecHex->isChecked())
     {
-        this->ByteToHexString(data,datagram);
+        ByteToHexString(data,datagram);
     }
     // 普通字符串
     else
@@ -141,7 +141,7 @@ void MainWindow::UdpReadData()
 void MainWindow::on_btn_udpBind_clicked()
 {
     // 解绑udp
-    if(this->m_udpSocket!=nullptr)
+    if(m_udpSocket!=nullptr)
     {
         // 断开信号槽
         m_udpSocket->disconnect();
@@ -187,9 +187,9 @@ void MainWindow::on_btn_udpBind_clicked()
             return;
         }
 
-        this->m_udpSocket=new QUdpSocket(this);
+        m_udpSocket=new QUdpSocket(this);
         // 绑定端口
-        this->m_udpSocket->bind(localip,port,QAbstractSocket::ShareAddress);
+        m_udpSocket->bind(localip,port,QAbstractSocket::ShareAddress);
         // 连接接收信号槽
         connect(m_udpSocket,SIGNAL(readyRead()),this,SLOT(UdpReadData()));
         // 更新UI
@@ -323,7 +323,7 @@ void MainWindow::on_chk_udpGroup_clicked(bool checked)
     static QHostAddress currentIP;
     if(checked)
     {
-        if(this->m_udpSocket == nullptr)
+        if(m_udpSocket == nullptr)
         {
             QMessageBox::warning(this,"警告","请先绑定本地IP和端口");
             ui->chk_udpGroup->setChecked(false);
@@ -369,9 +369,9 @@ void MainWindow::ClinetReadData()
     QByteArray ba = m_tcpSocket->readAll();
     QString data;
     // hex
-    if(ui->chk_udpRecHex->isChecked())
+    if(ui->chk_clientRecHex->isChecked())
     {
-        this->ByteToHexString(data,ba);
+        ByteToHexString(data,ba);
     }
     else// 普通字符串
     {
@@ -428,7 +428,7 @@ void MainWindow::on_btn_clientConnect_clicked()
             return;
         }
 
-        this->m_tcpSocket=new QTcpSocket(this);
+        m_tcpSocket=new QTcpSocket(this);
         m_tcpSocket->connectToHost(ip,port);
         connect(m_tcpSocket,SIGNAL(error(QAbstractSocket::SocketError)),this,SLOT(ClientReadError(QAbstractSocket::SocketError)));
         // 等待连接
@@ -583,7 +583,7 @@ void MainWindow::on_btn_serverSend_clicked()
 void MainWindow::on_btn_serverListering_clicked()
 {
     // 未连接
-    if(this->m_tcpServer==nullptr)
+    if(m_tcpServer==nullptr)
     {
         bool ok=false;
         // 获取监听的端口号
@@ -679,7 +679,7 @@ void MainWindow::on_btn_udpClearSend_clicked()
 // 多线程，公开tcp服务器hex发送标志
 void MainWindow::on_chk_ServerRecHex_clicked(bool checked)
 {
-    this->m_serverHexSend=checked;
+    m_serverHexSend=checked;
 }
 
 // 点击tcp客户端发送

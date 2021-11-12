@@ -13,7 +13,7 @@ MServer::MServer(QObject *parent) :
 {        
     mainwindow = static_cast<MainWindow*>(parent);
     // 在线程内创建对象，槽函数在这个线程中执行
-    this->sockethelper=new SocketHelper(this);
+    sockethelper=new SocketHelper(this);
     // 注册信号类型
     qRegisterMetaType<qintptr>("qintptr");
     // 连接信号和槽
@@ -31,8 +31,8 @@ MServer::~MServer()
         list_information.removeAt(0);
     }
     // 清空combox
-    while (this->mainwindow->ui->comboBox->count()>1) {
-        this->mainwindow->ui->comboBox->removeItem(1);
+    while (mainwindow->ui->comboBox->count()>1) {
+        mainwindow->ui->comboBox->removeItem(1);
     }
 
     // 释放所有线程
@@ -47,7 +47,7 @@ MServer::~MServer()
     }
     // UI线程里的sockethelper
     sockethelper->disconnect();
-    delete  this->sockethelper;//
+    delete sockethelper;
 }
 
 // 获取负载最少的线程索引
@@ -122,19 +122,19 @@ void MServer::AddInf(MSocket* socket,int index)
     inf.str_inf=str_inf;
     inf.socket=socket;
     inf.threadIndex=index;
-    this->list_information.append(inf);
-    this->mainwindow->ui->comboBox->addItem(inf.str_inf,QVariant::fromValue(inf.socket));
+    list_information.append(inf);
+    mainwindow->ui->comboBox->addItem(inf.str_inf,QVariant::fromValue(inf.socket));
 }
 
 // 移除socket信息
 void MServer::RemoveInf(MSocket* socket)
 {
-    for (int i=0;i<this->list_information.count();i++)
+    for (int i=0;i<list_information.count();i++)
     {
-        if(this->list_information[i].socket == socket)
+        if(list_information[i].socket == socket)
         {
-            this->list_information.removeAt(i);
-            this->mainwindow->ui->comboBox->removeItem(i+1);
+            list_information.removeAt(i);
+            mainwindow->ui->comboBox->removeItem(i+1);
             break;
         }
     }

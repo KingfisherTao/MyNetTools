@@ -5,24 +5,24 @@
 
 MThread::MThread(QObject *parent)
 {
-    this->m_server=static_cast<MServer*>(parent);
-    this->sockethelper=nullptr;
-    this->ThreadLoad = 0;
+    m_server=static_cast<MServer*>(parent);
+    sockethelper=nullptr;
+    ThreadLoad = 0;
 }
 
 MThread::~MThread()
 {
-    if(this->sockethelper!=nullptr)
+    if(sockethelper!=nullptr)
     {
         sockethelper->disconnect();
-        delete this->sockethelper;//释放sockethelper
+        delete sockethelper;//释放sockethelper
     }
 }
 
 void MThread::run()
 {
     //在线程内创建对象，槽函数在这个线程中执行
-    this->sockethelper=new SocketHelper(this->m_server);
+    sockethelper=new SocketHelper(m_server);
     connect(sockethelper,&SocketHelper::Create,sockethelper,&SocketHelper::CreateSocket);
     connect(sockethelper,&SocketHelper::AddList,m_server,&MServer::AddInf);
     connect(sockethelper,&SocketHelper::RemoveList,m_server,&MServer::RemoveInf);
@@ -32,7 +32,7 @@ void MThread::run()
 
 SocketHelper::SocketHelper(QObject *parent)
 {
-    this->myserver=static_cast<MServer*>(parent);
+    m_server=static_cast<MServer*>(parent);
 
 }
 
@@ -40,7 +40,7 @@ void SocketHelper::CreateSocket(qintptr socketDescriptor,int index)
 {
     qDebug()<<"子线程:"<<QThread::currentThreadId();
 
-    MSocket* tcpsocket = new MSocket(this->myserver);
+    MSocket* tcpsocket = new MSocket(m_server);
     tcpsocket->sockethelper = this;
     // 初始化socket
     tcpsocket->setSocketDescriptor(socketDescriptor);
@@ -50,7 +50,7 @@ void SocketHelper::CreateSocket(qintptr socketDescriptor,int index)
     if( index!= -1)
     {
         // 负载+1
-        myserver->list_thread[index]->ThreadLoad+=1;//负载+1
+        m_server->list_thread[index]->ThreadLoad+=1;//负载+1
         // 关联释放socket,非UI线程需要阻塞
         connect(tcpsocket , &MSocket::DeleteSocket , tcpsocket, &MSocket::deal_disconnect,Qt::ConnectionType::BlockingQueuedConnection);
     }
@@ -60,7 +60,7 @@ void SocketHelper::CreateSocket(qintptr socketDescriptor,int index)
     }
 
     // 关联显示消息
-    connect(tcpsocket,&MSocket::AddMessage,myserver->mainwindow,&MainWindow::AddServerMessage);
+    connect(tcpsocket,&MSocket::AddMessage,m_server->mainwindow,&MainWindow::AddServerMessage);
     // 发送消息
     connect(tcpsocket,&MSocket::WriteMessage,tcpsocket,&MSocket::deal_write);
     // 关联接收数据
